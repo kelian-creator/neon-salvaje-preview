@@ -48,3 +48,20 @@ jobs:
         run: |
           git tag "pages-deployed-${COMMIT_SHA}"
           git push origin "pages-deployed-${COMMIT_SHA}"
+
+  report:
+    if: always()
+    needs: deploy
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Publish workflow result
+        env:
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+        run: |
+          git tag "pages-result-${DEPLOY_RESULT}-${GITHUB_SHA}"
+          git push origin "pages-result-${DEPLOY_RESULT}-${GITHUB_SHA}"
