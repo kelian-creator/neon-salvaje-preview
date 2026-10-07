@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Templo luminoso de Fortuna">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#102733"/><stop offset=".58" stop-color="#101923"/><stop offset="1" stop-color="#11121d"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#296b78"/><stop offset=".5" stop-color="#e5bd5b"/><stop offset="1" stop-color="#29717c"/></linearGradient>
+    <radialGradient id="sun"><stop stop-color="#ffe792" stop-opacity=".44"/><stop offset="1" stop-color="#50f3ec" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="800" cy="358" r="410" fill="url(#sun)"/>
+  <g fill="#101a22" stroke="url(#stone)" stroke-opacity=".44" stroke-width="5">
+    <path d="M414 469 800 250l386 219-42 38H456Z"/>
+    <path d="M482 507h636v35H482zM450 760h700v40H450zM418 805h764v25H418z"/>
+    <path d="M528 548h66v203h-66zM656 548h66v203h-66zM878 548h66v203h-66zM1006 548h66v203h-66z"/>
+    <path d="M753 751V537q47-87 94 0v214Z"/>
+  </g>
+  <g fill="none" stroke="#ffe39a" stroke-opacity=".48" stroke-width="3">
+    <path d="M518 464 800 304l282 160M478 493h644M522 530h556M466 778h668M418 835h764"/>
+    <circle cx="800" cy="392" r="78"/><circle cx="800" cy="392" r="59"/>
+    <path d="M800 294v196M702 392h196M731 323l138 138M869 323 731 461"/>
+    <path d="M0 900 470 818M1600 900l-470-82M340 900l385-82M1260 900l-385-82" stroke="#50f3ec" stroke-opacity=".3"/>
+  </g>
+  <g fill="#ffd34e" fill-opacity=".7"><circle cx="365" cy="358" r="4"/><circle cx="1235" cy="330" r="4"/><circle cx="470" cy="266" r="3"/><circle cx="1130" cy="245" r="3"/></g>
+</svg>

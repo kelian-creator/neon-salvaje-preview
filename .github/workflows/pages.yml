@@ -1,0 +1,50 @@
+name: Publish Neón Salvaje preview
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload preview
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy preview
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Mark successful deployment
+        uses: actions/checkout@v4
+
+      - name: Publish deployment marker
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          git tag "pages-deployed-${COMMIT_SHA}"
+          git push origin "pages-deployed-${COMMIT_SHA}"

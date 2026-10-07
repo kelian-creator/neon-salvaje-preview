@@ -1,0 +1,14 @@
+window.TempleAdsConfig=Object.freeze({
+ mode:"off",bannerSlots:Object.freeze(["banner-top","banner-bottom"]),
+ matchesBetweenInterstitials:3,interstitialCooldownMs:180000,
+ providerLoadTimeoutMs:15000,presentationTimeoutMs:180000,
+ admob:Object.freeze({
+  mode:"test",
+  appId:"ca-app-pub-3940256099942544~3347511713",
+  bannerId:"ca-app-pub-3940256099942544/9214589741",
+  interstitialId:"ca-app-pub-3940256099942544/1033173712",
+  rewardedId:"ca-app-pub-3940256099942544/5224354917",
+  rewardedHaloId:"ca-app-pub-3940256099942544/5224354917",
+  testingDevices:Object.freeze([])
+ })
+});

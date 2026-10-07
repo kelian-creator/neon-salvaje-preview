@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#160b22">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Neón Salvaje: Templo de la Fortuna, un juego arcade con caminos, dioses y créditos virtuales sin canje por dinero.">
+    <meta name="color-scheme" content="dark">
+    <title>Neón Salvaje — Templo de la Fortuna</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="symbol-art.js" defer></script>
+    <script src="dark-symbol-art.js" defer></script>
+    <script src="profile-config.js" defer></script>
+    <script src="temple-catalog.js" defer></script>
+    <script src="profile-wallet.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="epic-audio.js" defer></script>
+    <script src="character-audio.js" defer></script>
+    <script src="mobile.js" defer></script>
+    <script src="tutorial.js" defer></script>
+    <script src="ads-config.js" defer></script>
+    <script src="ads.js" defer></script>
+    <script src="credit-shop.js" defer></script>
+    <script src="temple-store.js" defer></script>
+    <script type="module" src="profile-auth.js"></script>
+    <script type="module" src="native-billing.js"></script>
+    <script type="module" src="android-admob.js"></script>
+  </head>
+  <body class="session-locked theme-fortuna" data-god-theme="fortuna" data-view="game">
+<nav class="app-navigation" aria-label="Pantallas de la aplicación">
+ <a class="app-wordmark" href="#juego">NEÓN <b>SALVAJE</b></a>
+ <div class="app-tabs"><button id="nav-game" type="button" aria-current="page">JUEGO</button><button id="nav-credits" type="button">CRÉDITOS</button><button id="nav-store" type="button">TIENDA</button></div>
+ <button id="nav-profile" type="button"><span id="nav-player">MI PERFIL</span> · <strong id="nav-balance">60 CR</strong></button>
+</nav>
+<main id="credit-screen" class="credit-screen" hidden aria-labelledby="credit-title">
+ <header class="credit-heading"><p class="eyebrow">TU RESERVA DE FORTUNA</p><h1 id="credit-title" tabindex="-1">CRÉDITOS DEL TEMPLO</h1><p>La misma cartera en todas tus partidas. Créditos virtuales, sin canje por dinero.</p></header>
+ <section class="wallet-summary" aria-label="Tu perfil y saldo"><div><small>SALDO DISPONIBLE</small><strong id="shop-balance">60 <span>CR</span></strong><p id="profile-name">Jugador</p></div><div><small>IDENTIFICADOR DEL JUGADOR</small><code id="profile-id"></code><p id="profile-status" role="status"></p><button id="google-signin" class="wallet-action" type="button">CONTINUAR CON GOOGLE</button><button id="wallet-sync" class="wallet-action" type="button" hidden>SINCRONIZAR</button></div></section>
+ <form id="profile-name-form" class="profile-name-form"><label for="profile-alias">Nombre de jugador</label><input id="profile-alias" maxlength="24" autocomplete="nickname" required><button class="wallet-action" type="submit">GUARDAR NOMBRE</button></form>
+ <div class="free-credit-grid"><section class="credit-offer"><span class="offer-symbol" aria-hidden="true">☀</span><h2>REGALO DIARIO</h2><strong>+20 CR</strong><p id="daily-credit-status"></p><button id="claim-daily" class="wallet-action" type="button">RECOGER REGALO</button></section><section class="credit-offer"><span class="offer-symbol" aria-hidden="true">▶</span><h2>UNA PAUSA, MÁS SUERTE</h2><strong>+60 CR</strong><p id="shop-ad-status">Completa un anuncio para sumar 60 créditos a tu perfil.</p><button id="shop-watch-ad" class="wallet-action" type="button">VER ANUNCIO · +60 CR</button></section></div>
+ <section class="credit-offer time-offer" aria-labelledby="time-shop-title"><span class="offer-symbol" aria-hidden="true">⌛</span><h2 id="time-shop-title">TIEMPO EXTRA</h2><strong id="time-bank">0 segundos guardados</strong><p id="time-offer-copy"></p><button id="buy-game-time" class="wallet-action" type="button"></button><button id="apply-saved-time" class="wallet-action" type="button">AÑADIR TIEMPO GUARDADO AL RELOJ</button><p>Durante la partida se añade al reloj. Si la partida ya terminó, se guarda para la siguiente; no reabre la partida anterior.</p></section>
+ <section aria-labelledby="time-packs-title"><h2 id="time-packs-title">RECARGAS DE TIEMPO</h2><div id="time-packs" class="credit-pack-grid"></div><p class="shop-status">El tiempo comprado se guarda en tu perfil. Puedes aplicarlo a la partida activa o usarlo en la siguiente.</p></section>
+ <section aria-labelledby="packs-title"><h2 id="packs-title">ELIGE TU RECARGA</h2><div id="credit-packs" class="credit-pack-grid"></div><p id="purchase-status" class="shop-status" role="status">Las compras todavía no están activadas.</p></section>
+ <details class="wallet-history"><summary>MOVIMIENTOS DE TU CARTERA</summary><ol id="wallet-history"></ol></details>
+ <p id="wallet-feedback" class="shop-status" role="status" aria-live="polite"></p><button id="shop-return-game" class="wallet-action" type="button">VOLVER AL JUEGO</button>
+</main>
+<main id="temple-store-screen" class="credit-screen temple-store-screen" hidden aria-labelledby="temple-store-title">
+ <header class="credit-heading"><p class="eyebrow">UN SANTUARIO QUE LLEVA TU NOMBRE</p><h1 id="temple-store-title" tabindex="-1">TIENDA DEL TEMPLO</h1><p>Decora tu templo, elige a tu protector y encuentra un compañero. Todo se compra con créditos del juego.</p></header>
+ <section class="temple-preview" aria-label="Vista previa de tu templo"><div id="temple-preview-art" aria-hidden="true"></div><div class="temple-preview-copy"><small>TU SANTUARIO</small><h2 id="temple-store-name">Templo personal</h2><p id="temple-loadout"></p><strong id="temple-store-balance"></strong></div></section>
+ <p class="shop-status">Puedes combinar adornos. Sólo un dios y una mascota equipados. Comprar un artículo lo desbloquea para siempre y lo equipa; después puedes quitarlo o volver a equiparlo sin pagar.</p>
+ <div class="store-filters" role="group" aria-label="Categorías de la tienda"><button type="button" data-store-filter="decor" aria-pressed="true">ADORNOS</button><button type="button" data-store-filter="god" aria-pressed="false">DIOSES</button><button type="button" data-store-filter="pet" aria-pressed="false">MASCOTAS</button></div>
+ <div id="temple-store-items" class="temple-item-grid"></div>
+ <p id="temple-store-feedback" class="shop-status" role="status" aria-live="polite"></p>
+ <p class="shop-status">Los adornos son visuales. Los dioses mejoran el bono de racha; las mascotas multiplican los premios ganadores. No multiplican regalos diarios, anuncios, tiempo, rescates ni créditos comprados. Los premios se redondean hacia abajo.</p>
+ <button id="temple-store-return" class="wallet-action" type="button">VOLVER AL JUEGO</button>
+</main>
+    <div class="page-glow page-glow--pink" aria-hidden="true"></div>
+    <div class="page-glow page-glow--lime" aria-hidden="true"></div>
+
+    <main class="entry-screen" id="entry-screen" aria-labelledby="intro-title">
+      <div class="entry-layout">
+        <section class="entry-copy">
+          <div class="entry-kicker"><span class="live-dot"></span> ARCADE CLUB <span>·</span> SALA 001</div>
+          <p class="entry-intro">SALA DE JUEGO · INTRODUCE TU NOMBRE</p>
+          <h1 class="entry-title" id="intro-title">NEÓN<br><span>SALVAJE</span></h1>
+          <p class="entry-temple-title">TEMPLO DE LA FORTUNA</p>
+          <p class="entry-description">Entra al templo, elige tu camino y deja que los rodillos te sorprendan.</p>
+
+          <form class="entry-form" id="entry-form">
+            <label for="player-name">NOMBRE DE JUGADOR</label>
+            <div class="entry-form-row">
+              <input id="player-name" name="player-name" type="text" maxlength="24" autocomplete="nickname" placeholder="Escribe tu nombre" required>
+              <button class="entry-submit" type="submit"><span>ENTRAR</span><span aria-hidden="true">➜</span></button>
+            </div>
+          </form>
+          <p class="entry-feedback" id="entry-feedback" role="status" hidden></p>
+          <button id="ad-entry-settings-button" class="ad-entry-button" type="button">PUBLICIDAD Y ADORNO DEL TEMPLO</button>
+
+          <div class="match-rules" aria-label="Reglas de la partida">
+            <div><small>REGALO DE BIENVENIDA</small><strong>60 <i>CR</i></strong></div>
+            <div><small>DURACIÓN</small><strong>02:00</strong></div>
+            <div><small>INACTIVIDAD</small><strong>−5 <i>CR / 15 S</i></strong></div>
+          </div>
+        </section>
+
+        <aside class="entry-ranking" aria-labelledby="ranking-title">
+          <div class="ranking-heading">
+            <div><span class="ranking-kicker">CLASIFICACIÓN LOCAL</span><h2 id="ranking-title">ÍNDICE DE PARTIDAS</h2></div>
+            <span class="ranking-mark" aria-hidden="true">✳</span>
+          </div>
+          <p class="ranking-caption">Mejores resultados · créditos al terminar</p>
+          <ol class="ranking-list" id="ranking-list" aria-live="polite">
+            <li class="ranking-empty">Aún no hay partidas registradas.<br>La primera puntuación puede ser tuya.</li>
+          </ol>
+          <div class="ranking-foot"><span></span> GUARDADO EN ESTE DISPOSITIVO <span></span></div>
+        </aside>
+      </div>
+    </main>
+
+    <header class="topbar">
+      <a class="brand" href="#juego" aria-label="Neón Salvaje, inicio">
+        <span class="brand-mark" aria-hidden="true">N<span>!</span></span>
+        <span class="brand-name">NEÓN<br><b>SALVAJE</b></span>
+      </a>
+      <div class="topbar-right">
+        <button id="tutorial-button" class="mobile-control tutorial-button" type="button" aria-label="Abrir tutorial" title="Cómo jugar">?</button>
+        <button id="pause-game" class="mobile-control" type="button" aria-label="Pausar partida">Ⅱ</button>
+        <button id="fullscreen-game" class="mobile-control" type="button" aria-label="Entrar en pantalla completa" aria-pressed="false">⛶</button>
+        <span class="arcade-tag"><span class="live-dot"></span> MODO ARCADE</span>
+        <div class="credit-pill" aria-live="polite">
+          <span class="credit-icon" aria-hidden="true">✦</span>
+          <span><small>CRÉDITOS</small><strong id="balance">60</strong></span>
+        </div>
+        <button class="sound-button" id="sound-toggle" type="button" aria-label="Activar música y sonidos" aria-pressed="false" title="Activar música y sonidos">
+          <span aria-hidden="true">♫</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="ad-slot-top" hidden aria-hidden="true" data-ad-slot="banner-top"></div>
+
+    <main id="juego" class="game-layout">
+      <section class="machine" aria-labelledby="game-title">
+        <div class="session-strip" aria-label="Estado de la partida">
+          <span>JUGADOR <strong id="current-player">—</strong></span>
+          <span class="session-countdown">TIEMPO <strong id="match-countdown">02:00</strong></span>
+          <span class="session-idle-note">−5 CR CADA 15 S SIN GIRAR</span>
+        </div>
+        <div class="machine-topline">
+          <span class="eyebrow"><span class="sparkle">✦</span> LA NOCHE ES TUYA</span>
+          <span class="round-indicator"><i></i> <span id="round-count">TIRADA 01</span></span>
+        </div>
+
+        <div class="machine-heading">
+          <div>
+            <h1 id="game-title">NEÓN <span>SALVAJE</span></h1>
+            <p>Gira los rodillos. Enciende la noche.</p>
+          </div>
+          <div class="jackpot-badge" aria-label="Premio especial: triple siete">
+            <span class="jackpot-star" aria-hidden="true">✹</span>
+            <span><small>COMBO ESTRELLA</small><b>TRIPLE 7</b></span>
+          </div>
+        </div>
+
+        <div class="machine-bar">
+          <label for="machine-select"><span>MÁQUINA ACTIVA</span>
+            <select id="machine-select" aria-label="Seleccionar máquina">
+              <option value="neon-salvaje">NEÓN SALVAJE</option>
+              <option value="dark-ritual">DARK RITUAL</option>
+              <option value="neon-words">NEON WORDS</option>
+              <option value="future-machine" disabled>FUTURE MACHINE · NIVEL 10</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="deity-presence" id="deity-presence" hidden data-theme="fortuna" aria-label="Personaje invocado por la tirada">
+          <button class="deity-presence__button" id="deity-presence-button" tabindex="-1" type="button" data-god="fortuna" aria-label="Ver perfil de Fortuna">
+            <span class="deity-presence__portrait"><img id="deity-presence-portrait" src="assets/gods/fortuna.png" alt="" width="76" height="76"></span>
+            <span class="deity-presence__copy">
+              <small id="deity-presence-kicker">EL TEMPLO TE ACOMPAÑA</small>
+              <strong id="deity-presence-name">FORTUNA</strong>
+              <span id="deity-presence-line" role="status" aria-live="polite" aria-atomic="true">La diosa de la fortuna espera el resultado de tu tirada.</span>
+            </span>
+          </button>
+        </section>
+
+        <section class="recovery-panel" id="recovery-panel" hidden aria-labelledby="recovery-title">
+          <div><small>SEGUNDA OPORTUNIDAD · REGLAS VISIBLES</small><strong id="recovery-title">LA TIRADA HA SALIDO MAL</strong><p id="recovery-copy">Prueba una rueda. Si falla, se aplicará la penalización indicada.</p></div>
+          <div class="recovery-panel__actions"><button type="button" id="recovery-wheel-one">RUEDA I · FALLO −5 CR</button><button type="button" id="recovery-wheel-two" disabled>RUEDA II · FALLO −10 CR</button></div>
+        </section>
+
+        <div class="reel-stage" id="reel-stage" aria-label="Rodillos de la tragaperras">
+          <div class="stage-effects" id="stage-effects" aria-hidden="true"><span class="stage-source"></span></div>
+          <div class="reel-lights" aria-hidden="true"></div>
+          <div class="reel-window">
+            <div class="payline payline--top" aria-hidden="true"><span>01</span></div>
+            <div class="payline payline--center" aria-hidden="true"><span>★</span></div>
+            <div class="payline payline--bottom" aria-hidden="true"><span>03</span></div>
+            <div class="reels" id="reels" aria-live="polite" aria-atomic="true">
+              <div class="reel-column" data-reel="0"><div class="reel-strip"><div class="symbol">🍒</div><div class="symbol">🍋</div><div class="symbol">🔔</div></div></div>
+              <div class="reel-column" data-reel="1"><div class="reel-strip"><div class="symbol">💎</div><div class="symbol">⭐</div><div class="symbol">🍒</div></div></div>
+              <div class="reel-column" data-reel="2"><div class="reel-strip"><div class="symbol">🍋</div><div class="symbol">🔔</div><div class="symbol">💎</div></div></div>
+              <div class="reel-column" data-reel="3"><div class="reel-strip"><div class="symbol">🍒</div><div class="symbol">⭐</div><div class="symbol">🍋</div></div></div>
+            </div>
+          </div>
+          <div class="stage-screw stage-screw--tl"></div>
+          <div class="stage-screw stage-screw--tr"></div>
+          <div class="stage-screw stage-screw--bl"></div>
+          <div class="stage-screw stage-screw--br"></div>
+          <div class="stage-side-label stage-side-label--left">SPIN<br>TO WIN</div>
+          <div class="stage-side-label stage-side-label--right">LUCKY<br>VIBES</div>
+        </div>
+
+        <div class="result-bar" aria-live="polite">
+          <span class="result-icon" id="result-icon" aria-hidden="true">✦</span>
+          <span class="result-message" id="result-message">¿LISTA PARA GIRAR?</span>
+          <span class="win-amount" id="win-amount"></span>
+        </div>
+
+        <section class="run-hud" aria-label="Estado roguelike">
+          <div class="progress-panel" aria-label="Nivel, experiencia y gemas">
+            <div class="progress-topline">
+              <span>NIVEL <strong id="player-level">1</strong></span>
+              <span aria-label="Gemas virtuales">💎 <strong id="gem-count">0</strong></span>
+            </div>
+            <div class="xp-track" id="xp-track" role="progressbar" aria-label="Experiencia para el siguiente nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="xp-progress"></span></div>
+            <small class="xp-label" id="xp-label">0 / 100 XP · PRÓXIMO NIVEL</small>
+          </div>
+          <div class="combo-panel" aria-live="polite">
+            <span class="run-panel-kicker">RACHA</span>
+            <strong class="combo-value" id="combo-count">✦ ×0</strong>
+            <span class="combo-bonus" id="combo-bonus">BONO +0%</span>
+            <small>+5% POR VICTORIA · MÁX. +25%</small>
+          </div>
+          <div class="event-panel" id="event-panel" aria-live="polite">
+            <span class="event-icon" id="event-icon" aria-hidden="true">⚡</span>
+            <div class="event-copy">
+              <span class="run-panel-kicker">EVENTO ACTIVO</span>
+              <strong id="event-name">SIN EVENTO</strong>
+              <small id="event-effect">Puede activarse al girar</small>
+              <small class="power-active" id="active-power-description" hidden></small>
+            </div>
+            <strong class="event-duration" id="event-duration">--</strong>
+          </div>
+        </section>
+
+        <section class="temple-map-summary" aria-label="Tu progreso por el mapa del templo">
+          <div class="temple-map-summary__copy">
+            <small>MAPA DEL TEMPLO</small>
+            <strong id="temple-map-progress-label">NIVEL 1 DE 10</strong>
+            <div class="temple-map-progress" id="temple-map-progress" role="progressbar" aria-label="Progreso por los hitos del mapa" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1"><span id="temple-map-progress-fill"></span></div>
+            <span id="temple-map-next-stop">Primer hito: nivel 2</span>
+          </div>
+          <button id="open-temple-map" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="temple-map-modal">VER MAPA</button>
+        </section>
+
+        <div class="feature-controls">
+          <button id="ad-credits-game-button" class="ad-credit-button" type="button" disabled>VER ANUNCIO · +60 CR</button>
+          <div class="destiny-wheel-panel" id="destiny-wheel-panel">
+            <div class="destiny-wheel-copy">
+              <span class="destiny-wheel-mark" id="destiny-wheel-mark" aria-hidden="true">◉</span>
+              <span><small>RUEDA DEL DESTINO</small><strong id="destiny-wheel-status" role="status" aria-live="polite">UNA TIRADA POR PARTIDA</strong></span>
+            </div>
+            <button class="destiny-wheel-button" id="destiny-wheel-button" type="button" disabled>GIRAR RUEDA</button>
+          </div>
+          <div class="path-run-status" id="path-run-status" aria-live="polite">
+            <span class="path-run-status__mark" aria-hidden="true">◇</span>
+            <span><small>CAMINO ELEGIDO</small><strong id="path-run-name">PENDIENTE</strong><small id="path-run-effect">Elige tu sendero para comenzar</small></span>
+          </div>
+          <div class="free-spin-status" id="free-spin-status" aria-live="polite">
+            <span aria-hidden="true">✦</span><span id="free-spin-count">0</span> GRATIS
+          </div>
+          <div class="bonus-reel-panel" id="bonus-reel-panel" hidden>
+            <span class="bonus-reel-kicker">BONO</span>
+            <div class="bonus-reel-grid">
+              <button class="bonus-reel-button" type="button" data-reel-index="0">RODILLO 1</button>
+              <button class="bonus-reel-button" type="button" data-reel-index="1">RODILLO 2</button>
+              <button class="bonus-reel-button" type="button" data-reel-index="2">RODILLO 3</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-deck">
+          <div class="bet-control" aria-label="Control de apuesta">
+            <span class="control-label">TU APUESTA</span>
+            <div class="bet-stepper">
+              <button class="step-button" id="bet-down" type="button" aria-label="Reducir apuesta">−</button>
+              <output id="bet-amount" aria-live="polite">20</output>
+              <button class="step-button" id="bet-up" type="button" aria-label="Aumentar apuesta">+</button>
+            </div>
+          </div>
+          <label class="luck-toggle" for="luck-toggle">
+            <input id="luck-toggle" type="checkbox">
+            <span class="luck-copy"><strong>SUERTE <b>x2</b></strong><small>DOBLE APUESTA<br>DOBLE PROBABILIDAD</small></span>
+          </label>
+          <button class="spin-button" id="spin-button" type="button">
+            <span class="spin-icon" aria-hidden="true">⟳</span>
+            <span class="spin-copy"><strong id="spin-label">GIRAR</strong><small id="spin-cost">COSTE 20 CR</small></span>
+            <span class="spin-arrow" aria-hidden="true">➜</span>
+          </button>
+          <button class="reset-button" id="reset-button" type="button" title="Finalizar partida">
+            <span aria-hidden="true">↺</span><small>FINALIZAR</small>
+          </button>
+        </div>
+
+        <section class="boss-panel" id="boss-panel" aria-labelledby="boss-title" hidden>
+          <div class="boss-heading">
+            <span class="boss-mark" aria-hidden="true">👹</span>
+            <div><span class="boss-kicker">OBJETIVO DE RUN · NIVEL 3</span><h2 id="boss-title">DEMONIO NEÓN</h2></div>
+            <span class="boss-lives" id="boss-lives" aria-label="3 objetivos activos">♥ ♥ ♥</span>
+          </div>
+          <p class="boss-description" id="boss-description">Completa los objetivos con tus giros. Las recompensas usan recursos virtuales.</p>
+          <div class="boss-objectives" id="boss-objectives"></div>
+        </section>
+        <section class="boss-victory" id="boss-victory" role="dialog" aria-modal="true" aria-labelledby="boss-victory-title" aria-describedby="boss-victory-copy" hidden>
+          <div class="boss-victory__card">
+            <span class="boss-victory__mark" id="boss-victory-mark" aria-hidden="true">✦</span>
+            <p class="boss-victory__kicker">EL TEMPLO RECONOCE TU VALOR</p>
+            <h2 id="boss-victory-title">BOSS DERROTADO</h2>
+            <p id="boss-victory-copy">Has superado el desafío.</p>
+            <button id="boss-victory-continue" type="button">CONTINUAR LA PARTIDA</button>
+          </div>
+        </section>
+
+        <p class="credit-note">Créditos de juego ficticios · No se juega con dinero real</p>
+      </section>
+
+      <aside class="info-rail" aria-label="Información de la partida">
+        <section class="paytable-panel" aria-labelledby="paytable-title">
+          <div class="panel-heading">
+            <div><span class="panel-kicker">TABLA DE PREMIOS</span><h2 id="paytable-title">¿Qué cae?</h2></div>
+            <span class="paytable-mark" aria-hidden="true">✳</span>
+          </div>
+          <p class="panel-copy" id="paytable-copy">Tres iguales pagan y pueden activar tiradas gratis.</p>
+          <div class="paytable-list">
+            <div class="paytable-row paytable-row--top"><span class="pay-symbol" data-symbol="triple siete"></span><span class="pay-name">TRIPLE SIETE</span><strong>× 50</strong></div>
+            <div class="paytable-row"><span class="pay-symbol" data-symbol="diamantes"></span><span class="pay-name">DIAMANTES</span><strong>× 25</strong></div>
+            <div class="paytable-row"><span class="pay-symbol" data-symbol="estrellas"></span><span class="pay-name">ESTRELLAS</span><strong>× 15</strong></div>
+            <div class="paytable-row"><span class="pay-symbol" data-symbol="campanas"></span><span class="pay-name">CAMPANAS</span><strong>× 10</strong></div>
+            <div class="paytable-row"><span class="pay-symbol" data-symbol="cerezas"></span><span class="pay-name">CEREZAS</span><strong>× 8</strong></div>
+            <div class="paytable-row"><span class="pay-symbol" data-symbol="limones"></span><span class="pay-name">LIMONES</span><strong>× 5</strong></div>
+            <div class="paytable-row paytable-row--pair"><span class="pay-symbol" data-symbol="estrellas" data-count="2" data-any-pair="true"></span><span class="pay-name">CUALQUIER PAREJA</span><strong>× 2</strong></div>
+            <div class="paytable-row paytable-row--word" hidden><span class="pay-symbol" data-word="NEON"></span><span class="pay-name">PALABRA NEON</span><strong>× 50</strong></div>
+          </div>
+          <p class="power-rule" id="power-rule">TRIPLES GRATIS: 🍒 +1 · 🍋 +1 · 🔔 +2 · ⭐ +3 · 💎 +4 · 7 +7</p>
+          <p class="power-rule wild-rules" id="wild-rules">WILD sustituye · FIRE WILD +50% · MULTI WILD cuenta como 2. Por rodillo: WILD 4% · FIRE 1,5% · MULTI 1%; en WILD STORM: 12% · 4% · 3%.</p>
+          <p class="power-rule event-rules" id="event-rules">EVENTOS: 12% por tirada libre de evento · 4 eventos con el mismo peso · WILD STORM modifica las probabilidades de Wild</p>
+          <div class="paytable-foot"><span class="foot-line"></span> PREMIOS SEGÚN TU APUESTA <span class="foot-line"></span></div>
+        </section>
+
+        <section class="history-panel" aria-labelledby="history-title">
+          <div class="history-heading"><h2 id="history-title">ÚLTIMAS TIRADAS</h2><span id="history-count">0 / 5</span></div>
+          <ol class="history-list" id="history-list">
+            <li class="history-empty">Tu suerte empieza ahora <span aria-hidden="true">↗</span></li>
+          </ol>
+        </section>
+        <details class="collection-panel" id="collection-panel">
+          <summary>COLECCIÓN Y ESTADÍSTICAS</summary>
+          <div class="collection-content">
+            <h3>COLECCIÓN</h3>
+            <div class="collection-list" id="collection-list"></div>
+            <section class="pantheon-section" aria-labelledby="pantheon-title">
+              <h3 id="pantheon-title">PANTEÓN</h3>
+              <p class="pantheon-copy">Descubre dioses, personajes y símbolos mientras juegas.</p>
+              <div class="pantheon-categories" role="group" aria-label="Categorías del panteón">
+                <button type="button" data-pantheon-category="gods" aria-pressed="true">DIOSES</button>
+                <button type="button" data-pantheon-category="characters" aria-pressed="false">PERSONAJES</button>
+                <button type="button" data-pantheon-category="relics" aria-pressed="false">RELIQUIAS</button>
+                <button type="button" data-pantheon-category="symbols" aria-pressed="false">SÍMBOLOS</button>
+              </div>
+              <p class="pantheon-status" id="pantheon-status" aria-live="polite">0 / 0 DESCUBIERTOS</p>
+              <div class="pantheon-list" id="pantheon-list" aria-live="polite"></div>
+            </section>
+            <h3>LOGROS</h3>
+            <ul class="achievement-list" id="achievement-list"></ul>
+            <h3>ESTADÍSTICAS</h3>
+            <dl class="statistics-grid" id="statistics-grid"></dl>
+          </div>
+        </details>
+        <div class="rail-sticker" aria-hidden="true"><span>BUENA<br>SUERTE</span><b>✦</b></div>
+      </aside>
+    </main>
+
+    <div class="ad-slot-bottom" hidden aria-hidden="true" data-ad-slot="banner-bottom"></div>
+
+    <div class="god-modal" id="god-modal" hidden>
+      <button class="god-modal__scrim" type="button" data-god-close aria-label="Cerrar ventana de dios"></button>
+      <section class="god-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="god-modal-name" aria-describedby="god-modal-description">
+        <button class="god-modal__close" type="button" data-god-close aria-label="Cerrar">×</button>
+        <div class="god-modal__aura" aria-hidden="true"></div>
+        <div class="god-modal__portrait" aria-hidden="true">
+          <img class="god-modal__portrait-image" data-god-portrait alt="" hidden>
+          <img class="god-modal__portrait-fallback" data-god-fallback alt="" src="assets/icons/fortuna.svg" width="92" height="92">
+        </div>
+        <p class="god-modal__kicker">FUERZA DEL TEMPLO</p>
+        <h2 id="god-modal-name">FORTUNA</h2>
+        <p class="god-modal__title" id="god-modal-title">DIOSA DE LA BUENA SUERTE</p>
+        <p class="god-modal__description" id="god-modal-description">La luz que guía la prosperidad, la energía y la recompensa.</p>
+        <button class="god-modal__continue" type="button" data-god-close>CONTINUAR</button>
+      </section>
+    </div>
+    <section class="temple-transition" id="temple-transition" hidden role="status" aria-live="polite" aria-atomic="true" aria-label="Narración del templo">
+      <div class="temple-particles" aria-hidden="true"></div>
+      <img src="assets/icons/destiny-wheel.svg" alt="" width="68" height="68">
+      <strong>ABRIENDO EL TEMPLO</strong>
+      <small>FORTUNA · NÉMESIS</small>
+    </section>
+    <div class="destiny-modal" id="destiny-modal" hidden>
+      <button class="destiny-modal__scrim" type="button" data-destiny-close aria-label="Cerrar la rueda del destino"></button>
+      <section class="destiny-modal__dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="destiny-title" aria-describedby="destiny-wheel-result">
+        <button class="destiny-modal__close" id="destiny-wheel-close" type="button" data-destiny-close aria-label="Cerrar rueda">×</button>
+        <p class="destiny-modal__eyebrow">FORTUNA · NÉMESIS · DESTINO</p>
+        <h2 id="destiny-title">RUEDA DEL DESTINO</h2>
+        <p class="destiny-modal__intro">Cada sector representa su probabilidad. Solo usa recursos virtuales.</p>
+        <div class="destiny-wheel-wrap">
+          <span class="destiny-wheel-pointer" aria-hidden="true">▼</span>
+          <svg class="destiny-wheel-disc" id="destiny-wheel-disc" viewBox="0 0 320 320" role="img" aria-label="Rueda con cuatro resultados y sectores proporcionales a sus probabilidades"></svg>
+          <span class="destiny-wheel-hub" aria-hidden="true">✦</span>
+        </div>
+        <ul class="destiny-wheel-legend" id="destiny-wheel-legend" aria-label="Resultados y probabilidades"></ul>
+        <p class="destiny-wheel-result" id="destiny-wheel-result" role="status" aria-live="polite">La rueda utiliza solo recursos virtuales.</p>
+        <button class="destiny-wheel-spin" id="destiny-wheel-spin" type="button">GIRAR RUEDA</button>
+      </section>
+    </div>
+    <div class="recovery-modal" id="recovery-modal" hidden>
+      <button class="recovery-modal__scrim" type="button" data-recovery-close aria-label="Cerrar ruedas de rescate"></button>
+      <section class="recovery-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="recovery-modal-title" aria-describedby="recovery-modal-copy">
+        <button class="recovery-modal__close" type="button" data-recovery-close aria-label="Cerrar">×</button>
+        <img src="assets/icons/destiny-wheel.svg" alt="" width="76" height="76">
+        <p>RIESGO VIRTUAL · DECISIÓN DEL JUGADOR</p><h2 id="recovery-modal-title">RUEDA DE RESCATE</h2>
+        <p id="recovery-modal-copy">Los resultados y la penalización son visibles antes de girar.</p>
+        <div class="recovery-wheel-wrap" aria-hidden="true"><div class="recovery-wheel" id="recovery-wheel"><span>✦</span></div></div>
+        <p id="recovery-wheel-result" role="status" aria-live="polite">Elige si quieres intentar recuperar la tirada.</p>
+        <button id="recovery-wheel-spin" type="button">GIRAR RUEDA</button>
+      </section>
+    </div>
+    <div class="temple-map-modal" id="temple-map-modal" hidden>
+      <div class="temple-map-modal__scrim" aria-hidden="true"></div>
+      <section class="temple-map-dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="temple-map-title" aria-describedby="temple-map-description">
+        <button class="temple-map-dialog__close" type="button" data-temple-map-close aria-label="Cerrar mapa">×</button>
+        <p class="temple-map-dialog__eyebrow">TU RECORRIDO · EXPERIENCIA ACUMULADA</p>
+        <h2 id="temple-map-title">EL CAMINO DEL TEMPLO</h2>
+        <p id="temple-map-description">Cada tirada y sus logros suman XP. Consulta en cada punto la puntuación total necesaria para llegar; los bosses muestran además su recompensa de XP.</p>
+        <div class="temple-map-legend" aria-label="Leyenda del mapa"><span><i class="temple-map-legend__player"></i> TU POSICIÓN</span><span><i class="temple-map-legend__boss">◆</i> DESAFÍO BOSS</span><span><i class="temple-map-legend__done">✓</i> SUPERADO</span><span>META = XP acumulada para alcanzar el nivel</span></div>
+        <div class="temple-map-viewport">
+          <div class="temple-map-stage">
+            <svg class="temple-map-route__path" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="temple-map-gradient"><stop stop-color="#50f3ec"/><stop offset="1" stop-color="#d4ff52"/></linearGradient></defs><path class="temple-map-route__line" d="M55 244 C110 235 115 183 165 177 S220 121 275 119 S332 159 387 162 S442 100 498 93 S555 202 608 203 S663 151 718 148 S773 81 828 78 S883 131 945 42"/><path class="temple-map-route__line temple-map-route__line--progress" id="temple-map-route-progress" d="M55 244 C110 235 115 183 165 177 S220 121 275 119 S332 159 387 162 S442 100 498 93 S555 202 608 203 S663 151 718 148 S773 81 828 78 S883 131 945 42"/></svg>
+            <span class="temple-map-player" id="temple-map-player" aria-hidden="true">✦</span>
+            <ol class="temple-map-route" id="temple-map-route" aria-label="Diez niveles de progreso">
+            <li class="temple-map-node" data-map-level="1" style="--map-x:5.5%;--map-y:81.3%"><span class="temple-map-node__mark">✦</span><span class="temple-map-node__level">NIVEL 1</span><span class="temple-map-node__name">PORTAL</span></li>
+            <li class="temple-map-node" data-map-level="2" style="--map-x:16.5%;--map-y:59%"><span class="temple-map-node__mark">●</span><span class="temple-map-node__level">NIVEL 2</span><span class="temple-map-node__name">HITO</span></li>
+            <li class="temple-map-node temple-map-node--boss" data-map-level="3" data-map-boss="demonio-neon" style="--map-x:27.5%;--map-y:39.7%"><span class="temple-map-node__mark">◆</span><span class="temple-map-node__level">NIVEL 3</span><span class="temple-map-node__name">DEMONIO NEÓN</span><span class="temple-map-node__status"></span></li>
+            <li class="temple-map-node" data-map-level="4" style="--map-x:38.7%;--map-y:54%"><span class="temple-map-node__mark">●</span><span class="temple-map-node__level">NIVEL 4</span><span class="temple-map-node__name">HITO</span></li>
+            <li class="temple-map-node temple-map-node--boss" data-map-level="5" data-map-boss="avatar-fortuna,avatar-nemesis" style="--map-x:49.8%;--map-y:31%"><span class="temple-map-node__mark">◆</span><span class="temple-map-node__level">NIVEL 5</span><span class="temple-map-node__name">AVATARES</span><span class="temple-map-node__status"></span></li>
+            <li class="temple-map-node" data-map-level="6" style="--map-x:60.8%;--map-y:67.7%"><span class="temple-map-node__mark">●</span><span class="temple-map-node__level">NIVEL 6</span><span class="temple-map-node__name">HITO</span></li>
+            <li class="temple-map-node temple-map-node--boss" data-map-level="7" data-map-boss="reina-wild" style="--map-x:71.8%;--map-y:49.3%"><span class="temple-map-node__mark">◆</span><span class="temple-map-node__level">NIVEL 7</span><span class="temple-map-node__name">REINA WILD</span><span class="temple-map-node__status"></span></li>
+            <li class="temple-map-node" data-map-level="8" style="--map-x:82.8%;--map-y:26%"><span class="temple-map-node__mark">●</span><span class="temple-map-node__level">NIVEL 8</span><span class="temple-map-node__name">HITO</span></li>
+            <li class="temple-map-node" data-map-level="9" style="--map-x:90%;--map-y:55%"><span class="temple-map-node__mark">●</span><span class="temple-map-node__level">NIVEL 9</span><span class="temple-map-node__name">UMBRAL</span></li>
+            <li class="temple-map-node temple-map-node--boss temple-map-node--final" data-map-level="10" data-map-boss="destino" style="--map-x:94.5%;--map-y:14%"><span class="temple-map-node__mark">◆</span><span class="temple-map-node__level">NIVEL 10</span><span class="temple-map-node__name">DESTINO</span><span class="temple-map-node__status"></span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="temple-map-current"><strong id="temple-map-current-label">NIVEL 1 · 0 / 100 XP</strong><span id="temple-map-current-status" role="status" aria-live="polite">Tu aventura empieza aquí.</span></div>
+        <p class="temple-map-note">El mapa refleja tu nivel y XP guardados. No cambia los premios ni las probabilidades de los rodillos.</p>
+      </section>
+    </div>
+
+    <div class="path-modal" id="path-modal" hidden>
+      <section class="path-modal__dialog" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="path-title" aria-describedby="path-intro">
+        <p class="path-modal__eyebrow">UNA DECISIÓN · UNA PARTIDA</p>
+        <h2 id="path-title">EL DESTINO TE OFRECE DOS CAMINOS</h2>
+        <p class="path-modal__intro" id="path-intro">Elige una ruta. Sus efectos son visibles, fijos y duran cinco giros.</p>
+        <div class="path-options" role="group" aria-label="Elige el camino de esta partida">
+          <button class="path-option path-option--fortuna" id="path-fortuna" type="button" aria-describedby="path-fortuna-effect">
+            <span class="path-option__icon" aria-hidden="true">☀</span>
+            <strong>CAMINO DE FORTUNA</strong>
+            <span id="path-fortuna-effect">Prosperidad · +15% a premios ganadores durante 5 giros.</span>
+            <small>LUZ · RECOMPENSA</small>
+          </button>
+          <button class="path-option path-option--nemesis" id="path-nemesis" type="button" aria-describedby="path-nemesis-effect">
+            <span class="path-option__icon" aria-hidden="true">☾</span>
+            <strong>CAMINO DE NÉMESIS</strong>
+            <span id="path-nemesis-effect">Desafío · −10% a premios ganadores durante 5 giros; al completarlos, +5 gemas virtuales.</span>
+            <small>SOMBRA · RIESGO VIRTUAL</small>
+          </button>
+        </div>
+        <p class="path-modal__foot">La elección no altera las probabilidades de los rodillos.</p>
+      </section>
+    </div>
+    <div class="ad-slot-interstitial" hidden aria-hidden="true" data-ad-slot="interstitial"></div>
+
+    <div class="bonus-overlay" id="bonus-modal" hidden>
+      <section class="bonus-panel" role="dialog" aria-modal="true" aria-labelledby="bonus-title" aria-describedby="bonus-description">
+        <span class="bonus-kicker">BONUS NEÓN · RECOMPENSA DESBLOQUEADA</span>
+        <h2 id="bonus-title">ELIGE TU PODER</h2>
+        <p id="bonus-description">Tu premio activa una bonificación. Elige una opción para continuar.</p>
+        <div class="bonus-options" role="group" aria-label="Elige una recompensa">
+          <button class="bonus-option" type="button" data-bonus="overdrive">
+            <span class="bonus-icon" aria-hidden="true">⚡</span><strong>OVERDRIVE</strong><small>+25% a premios · 3 giros</small>
+          </button>
+          <button class="bonus-option" type="button" data-bonus="wild">
+            <span class="bonus-icon" aria-hidden="true">🃏</span><strong>WILD</strong><small>1 comodín por giro · 3 giros</small>
+          </button>
+          <button class="bonus-option" type="button" data-bonus="gem-rush">
+            <span class="bonus-icon" aria-hidden="true">💎</span><strong>GEM RUSH</strong><small>+3 gemas virtuales</small>
+          </button>
+          <button class="bonus-option" type="button" data-bonus="extra-spins">
+            <span class="bonus-icon" aria-hidden="true">🎰</span><strong>EXTRA SPINS</strong><small>+3 tiradas gratis</small>
+          </button>
+        </div>
+        <div class="bonus-confirmation" aria-live="polite"><strong id="bonus-selection-title">Selecciona una recompensa</strong><p id="bonus-selection-detail">Pulsa una opción para conocer su efecto antes de confirmar.</p></div>
+        <button id="bonus-accept" class="bonus-accept" type="button" disabled>ACEPTAR</button>
+      </section>
+    </div>
+
+    <footer class="page-footer"><span>NEÓN SALVAJE <i>•</i> ARCADE CLUB</span><span>JUEGA POR DIVERSIÓN <b>✦</b></span><a href="PRIVACY.md">PRIVACIDAD</a><a href="ANDROID.md">ANDROID</a><button id="ad-settings-button" type="button">PUBLICIDAD</button></footer>
+    <div id="time-expired-modal" class="game-tutorial" hidden><section role="dialog" aria-modal="true" aria-labelledby="time-expired-title" aria-describedby="time-expired-copy"><span aria-hidden="true" class="time-expired-icon">⌛</span><h2 id="time-expired-title">TIEMPO AGOTADO</h2><p id="time-expired-copy">La partida ha terminado porque se ha agotado el reloj. Tu saldo y tu progreso se han guardado.</p><p id="time-expired-result"></p><div class="tutorial-actions"><button id="time-expired-close" type="button">ENTENDIDO</button><button id="time-expired-shop" type="button">VER TIEMPO EXTRA</button></div></section></div>
+    <div id="game-tutorial" class="game-tutorial" hidden><section role="dialog" aria-modal="true" aria-labelledby="tutorial-title" aria-describedby="tutorial-copy"><button id="tutorial-close" class="tutorial-close" type="button" aria-label="Cerrar tutorial">×</button><p id="tutorial-step"></p><span id="tutorial-icon" aria-hidden="true">✦</span><h2 id="tutorial-title"></h2><p id="tutorial-copy"></p><div class="tutorial-actions"><button id="tutorial-back" type="button">ANTERIOR</button><button id="tutorial-next" type="button">SIGUIENTE</button></div><small>Créditos y gemas virtuales · sin dinero real</small></section></div>
+    <div id="mobile-pause" class="mobile-pause" hidden><section role="dialog" aria-modal="true" aria-labelledby="mobile-pause-title"><h2 id="mobile-pause-title">TEMPLO EN PAUSA</h2><p>Tu tiempo y tus créditos quedan en pausa. Continúa cuando quieras.</p><button id="resume-game" type="button">CONTINUAR</button></section></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="celebration-layer" id="celebration-layer" aria-hidden="true"></div>
+  
+<div class="ad-overlay" id="ad-settings" hidden><section role="dialog" aria-modal="true" aria-labelledby="ad-settings-title">
+<button class="ad-close" id="ad-settings-close" type="button" aria-label="Cerrar opciones de publicidad">×</button>
+<span class="ad-eyebrow">PUBLICIDAD · OPCIONAL</span><h2 id="ad-settings-title">A TU RITMO</h2>
+<p>Puedes jugar sin anuncios. Los anuncios voluntarios pueden darte 60 créditos virtuales; no cambian las probabilidades ni los multiplicadores. La clasificación indica los créditos recibidos por anuncios.</p>
+<p id="ad-status" role="status" aria-live="polite"></p>
+<div class="ad-settings-actions"><button id="ad-demo-enable" type="button">PROBAR DEMOSTRACIÓN LOCAL</button><button id="ad-provider-enable" type="button" disabled>ACTIVAR PROVEEDOR</button><button id="ad-disable" type="button">DESACTIVAR ANUNCIOS</button><button id="ad-privacy-options" type="button" hidden>PRIVACIDAD DEL PROVEEDOR</button></div>
+<div class="ad-reward-offer"><strong>60 CRÉDITOS VIRTUALES</strong><p>Durante la partida, completa un anuncio para recibir +60 CR. El tiempo y la penalización quedan en pausa. Cerrar antes de obtener la recompensa no añade créditos y no te penaliza.</p><button id="ad-credits-button" type="button" disabled>VER ANUNCIO · +60 CR</button><small id="ad-credits-status" role="status" aria-live="polite"></small></div>
+<div class="ad-reward-offer"><strong>HALO DORADO DEL TEMPLO</strong><p>Adorno visual permanente en este dispositivo. No otorga créditos, gemas, giros, XP ni ventajas.</p><button id="ad-reward-button" type="button" disabled>VER ANUNCIO VOLUNTARIO</button><label id="ad-halo-option" hidden><input id="ad-halo-toggle" type="checkbox"> Usar halo dorado</label><small id="ad-reward-status" role="status" aria-live="polite">Disponible entre partidas cuando haya anuncios activados.</small></div>
+<small>La demostración no muestra publicidad real, no contacta con terceros y no genera ingresos.</small>
+</section></div>
+<div class="ad-overlay" id="ad-presentation" hidden><section role="dialog" aria-modal="true" aria-labelledby="ad-title" aria-describedby="ad-copy">
+<button class="ad-close" id="ad-dismiss" type="button" aria-label="Cerrar anuncio">×</button>
+<span class="ad-eyebrow">PUBLICIDAD · DEMOSTRACIÓN LOCAL</span><h2 id="ad-title">UN RESPIRO EN EL TEMPLO</h2><p id="ad-copy">Ejemplo de ubicación publicitaria. No es un anuncio real.</p>
+<div id="ad-presentation-content" class="ad-creative"></div>
+<button id="ad-demo-complete" type="button" hidden>COMPLETAR DEMOSTRACIÓN Y DESBLOQUEAR HALO</button>
+<p id="ad-presentation-status" role="status" aria-live="polite"></p>
+</section></div>
+</body>
+</html>
